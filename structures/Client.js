@@ -16,9 +16,12 @@ module.exports = class extends Client {
                 'GUILD_VOICE_STATES',
                 'GUILD_MESSAGE_REACTIONS'
             ],
-            messageCacheMaxSize: 50,
-            messageCacheLifetime: 60,
-            messageSweepInterval: 60,
+            sweepers: {
+                messages: {
+                    interval: 60,
+                    lifetime: 60
+                }
+            },
             retryLimit: 2,
             restGlobalRateLimit: 50
         })
@@ -29,7 +32,7 @@ module.exports = class extends Client {
         this.aliases = new Collection()
         this.language = JSON.parse(language)
     }
-    async login(token = this.token) {
+    async login(token = process.env.token) {
         super.login(token)
     }
 }

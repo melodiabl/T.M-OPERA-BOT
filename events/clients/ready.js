@@ -1,5 +1,8 @@
 const Event = require('../../structures/Event.js')
+const dns = require('dns')
 const mongoose = require('mongoose')
+
+dns.setServers(['8.8.8.8', '8.8.4.4'])
 
 const CreateManager = require('../../things/player.js')
 const GuildSchema = require('../../models/guild.js')
@@ -18,7 +21,15 @@ module.exports = class Ready extends Event {
             'Shard number ' + this.client.shard.ids[0] + ' is now running.'
         )
 
-        await mongoose.connect(process.env.MONGO_URL)
+        mongoose.set('strictQuery', false)
+        try {
+            await mongoose.connect(process.env.MONGO_URL)
+            console.log('✅ Conectado a MongoDB')
+        } catch (error) {
+            console.error('❌ Error MongoDB:', error.message)
+            process.exit(1)
+        }
+
 
         CreateManager(this.client)
         clearcache(this.client)
@@ -37,8 +48,9 @@ module.exports = class Ready extends Event {
             updateStatus(client)
         }, 900000)
 
-        this.client.manager.init(this.client.user.id)
-        this.client.on('raw', d => this.client.manager.updateVoiceState(d))
+            this.client.manager.init(this.client.user.id)
+            this.client.on('raw', d => this.client.manager.updateVoiceState(d))
+
 
         // this.client.api.applications(process.env.botID).commands.post({
         // 	data: fnprofilecommand

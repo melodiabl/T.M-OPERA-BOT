@@ -24,6 +24,7 @@ module.exports = class messageCreate extends Event {
     }
 
     async run(message) {
+        console.log(`📨 Mensaje recibido: "${message.content}" de ${message.author.tag}`)
         if (!message.guild) return
         if (
             (process.env.mode == 'maintenance' || process.env.mode == 'development') &&
@@ -633,19 +634,20 @@ module.exports = class messageCreate extends Event {
                     return message.channel.send({ embeds: [embed] })
                 }
                 if (messageLower.startsWith(Guild.prefix)) {
-                    //hace log de Guild a ver si le da tiempo de cogerla
+                    console.log(`✅ Comando detectado con prefijo: ${Guild.prefix}`)
                     prefix = Guild.prefix
                 } else if (
                     messageLower.split(' ')[0] == `<@!${client.user.id}>` ||
                     messageLower.split(' ')[0] == `<@${client.user.id}>`
                 ) {
-                    prefix = '<@!828771710676500502>'
+                    console.log(`✅ Comando detectado con mención`)
+                    prefix = `<@!${client.user.id}>`
                 } else {
                     return
                 }
             } else return
             if (prefix) {
-                if (prefix == '<@!828771710676500502>') {
+                if (prefix == `<@!${client.user.id}>` || prefix == `<@${client.user.id}>`) {
                     args = message.content.split(' ')
                     args.shift()
                     command = args.shift().toLowerCase()
@@ -662,7 +664,9 @@ module.exports = class messageCreate extends Event {
                 }
             }
             //ejecutamos el comando
+            console.log(`🔍 Buscando comando: "${command}"`)
             if (client.commands.has(command) || client.aliases.has(command)) {
+                console.log(`✅ Comando encontrado: ${command}`)
                 cmd = client.commands.get(command) || client.aliases.get(command)
                 if (cmd) {
                     if (cmd.inactive) return

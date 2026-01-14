@@ -77,3 +77,4 @@ typings/
 
 # vsc
 .vscode/
+package-lock.json
